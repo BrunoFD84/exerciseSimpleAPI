@@ -1,0 +1,19 @@
+---
+version: "3.8"
+services:
+  api:
+    container_name: simpleapi
+    restart: always
+    build: .
+    #aqui dizemos que o que chegar no porto 5000 é encaminhado para o porto 8080 do container? que é um dos que deixámos exposto no dockerfile!
+    ports:
+      - 5000:8080
+    links:
+      - mongo
+  mongo:
+    container_name: mongoapi
+    image: mongo:latest
+    volumes:
+      - ./data:/data/db
+    ports:
+      - 27017:27017
