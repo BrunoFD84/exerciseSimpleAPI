@@ -1,9 +1,13 @@
 using simpleAPI;
 using simpleAPI.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379"));
+
 
 builder.Services.AddControllers();
 // Add services to the container.

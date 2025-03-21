@@ -1,14 +1,17 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
+using StackExchange.Redis;
 
 namespace simpleAPI.Services
 {
     public class MongoService
     {
         private readonly IMongoCollection<BsonDocument> _collection;
+        private readonly IConnectionMultiplexer _redisConnection;
 
-        public MongoService(MongoDBContext dbContext)
+        public MongoService(IConnectionMultiplexer redisConnection, MongoDBContext dbContext)
         {
+            _redisConnection = redisConnection;
             _collection = dbContext.GetCollection("JsonStorage");
         }
 
@@ -17,7 +20,14 @@ namespace simpleAPI.Services
             var document = BsonDocument.Parse(json);
             await _collection.InsertOneAsync(document);
 
-            return document["_id"].ToString();
+            string value = DateTime.UtcNow.ToString("o"); // Timestamp em formato ISO 8601
+
+            string key = document["_id"].ToString();
+
+            var redisDb = _redisConnection.GetDatabase();
+            redisDb.StringSet(key, value);
+
+            return key;
         }
 
 
