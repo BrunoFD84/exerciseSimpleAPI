@@ -56,3 +56,7 @@ nunit-*.xml
 
 #visual studio
 .vs/
+
+
+src/simpleAPI/data/
+setup/data/
